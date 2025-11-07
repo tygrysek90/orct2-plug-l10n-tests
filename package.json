@@ -1,0 +1,31 @@
+{
+	"name": "openrct2-typescript-plugin",
+	"version": "1.0.0",
+	"type": "module",
+	"license": "GPL-3.0-only",
+	"scripts": {
+		"start": "nodemon --watch ./src --ext js,ts --exec \"npm run build:dev\"",
+		"start-graphics": "nodemon --watch ./img --ext png --exec \"npx tsx imgToBase64.ts\"",
+		"build-graphics": "npx tsx imgToBase64.ts",
+		"build": "rollup --config rollup.config.js --environment BUILD:production",
+		"build:dev": "rollup --config rollup.config.js",
+		"build-all:dev": "npx tsx imgToBase64.ts && rollup --config rollup.config.js"
+	},
+	"devDependencies": {
+		"@rollup/plugin-node-resolve": "^15.0.1",
+		"@rollup/plugin-replace": "^6.0.2",
+		"@rollup/plugin-terser": "^0.4.0",
+		"@rollup/plugin-typescript": "^11.0.0",
+		"@types/node": "^24.7.2",
+		"chalk": "^5.6.2",
+		"nodemon": "^2.0.22",
+		"rollup": "^3.15.0",
+		"tslib": "^2.5.0"
+	},
+	"dependencies": {
+		"openrct2-flexui": "^0.1.0-prerelease.20"
+	},
+	"bundleDependencies": [
+		"openrct2-flexui"
+	]
+}
