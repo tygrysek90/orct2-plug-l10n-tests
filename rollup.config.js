@@ -5,7 +5,34 @@ import typescript from "@rollup/plugin-typescript";
 import { exec } from "child_process";
 import { homedir } from "os";
 import { promisify } from "util";
+import * as fs from 'fs';
+import chalk from 'chalk';
 
+
+let langs = [];
+
+const pluginLanguages = {
+	getImports() {
+		var files = fs.readdirSync('./src/localisation/');
+		var output = ""
+		files.forEach(file => {
+			if (file.length == 7 && file != 'enGB.ts') {
+				langs.push(file.slice(0,4))
+				output += `import ${file.slice(0,4)} from \"./${file.slice(0,4)}\";`
+			}
+		})
+		return output
+	},
+	
+	getInits() {
+		var output = ""
+		langs.forEach(lang => {
+			output += `addTranslation(\"${lang.slice(0,2)}-${lang.slice(2,4)}\", ${lang});`;
+		})
+		console.log(chalk.cyan(`Packing languages ${langs}`))
+		return output
+	}
+}
 
 const pluginOptions = {
 	/**
@@ -23,8 +50,11 @@ const pluginOptions = {
 	/**
 	 * Version
 	 */
-	pluginVersion: "0.0"
+	pluginVersion: "0.0",
+
 }
+
+
 
 const options =
 {
@@ -94,13 +124,15 @@ const config = {
 	treeshake: "smallest",
 	plugins: [
 		replace({
-			include: "./src/environment.ts",
+			include: ["./src/environment.ts", "./src/localisation/localisationEngine.ts"],
 			preventAssignment: true,
 			values: {
 				__BUILD_CONFIGURATION__: options.build,
 				__PLUGIN_NAME__: pluginOptions.pluginName,
 				__PLUGIN_VERSION__: pluginOptions.pluginVersion,
-				__PLUGIN_AUTHOR__: pluginOptions.pluginAuthor
+				__PLUGIN_AUTHOR__: pluginOptions.pluginAuthor,
+				__CONDITIONAL_LANGUAGE_IMPORT__: pluginLanguages.getImports(),
+				__CONDITIONAL_LANGUAGE_INIT__: pluginLanguages.getInits()
 			}
 		}),
 		resolve(),

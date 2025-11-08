@@ -1,6 +1,8 @@
 import { build, pluginName } from "./environment";
 import { mainWindow } from "./mainWin";
 
+
+
 export function startup()
 {
 	// Write code here that should happen on startup of the plugin.
